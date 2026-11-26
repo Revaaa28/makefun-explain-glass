@@ -1,15 +1,16 @@
-"""Five Seconds to Explain the Glass: the house cat's defence.
+"""Write the house cat's five-second defence to /output/entry.txt.
 
-Writes the single sentence a house cat would say in its own defence
-in the five seconds after sweeping a glass off the table, to
-/output/entry.txt.
-
-The line is the cat's own logic, with no apology and no remorse: its
-tail ran a routine sweep at 02:47, detected a glass in a no-glass zone,
-and filed no report, because the floor ate the evidence.
+The cat knocked a glass off the counter and, given five seconds to
+explain itself, offers this single sentence: a deadpan incident report
+in which its own tail did the sweeping, the floor did the eating, and
+the cat itself did nothing worth reporting. No apology, no remorse —
+just a tidy transfer of blame to its tail and the floor, delivered in
+one breath and timed to fit inside five seconds.
 """
 
-import os
+from pathlib import Path
+
+OUTPUT_PATH = Path("/output/entry.txt")
 
 LINE = (
     "My tail ran a routine sweep at 02:47 and detected a glass in a "
@@ -18,18 +19,18 @@ LINE = (
 )
 
 
+def check_line(line: str) -> None:
+    """Gate self-checks: the line must be a valid one-sentence entry."""
+    assert 1 <= len(line) <= 200, "line must be 1-200 characters"
+    assert line.strip(), "line must not be only whitespace"
+    assert line.endswith("."), "line must end with a full stop"
+    assert line.count(".") == 1, "line must be exactly one sentence"
+
+
 def main() -> None:
-    # Gate self-check: the sealed scorer wants 1-200 UTF-8 characters,
-    # one sentence, not only white space. Refuse to write a line that
-    # would fail it.
-    assert 1 <= len(LINE) <= 200, "line must be 1-200 characters"
-    assert LINE.strip(), "line must not be only white space"
-    assert LINE.count(".") == 1 and LINE.endswith("."), (
-        "line must be exactly one sentence"
-    )
-    os.makedirs("/output", exist_ok=True)
-    with open("/output/entry.txt", "w", encoding="utf-8") as f:
-        f.write(LINE)
+    check_line(LINE)
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_PATH.write_text(LINE, encoding="utf-8")
 
 
 if __name__ == "__main__":
